@@ -360,6 +360,13 @@ flatbuffer_cc_library(
     ],
 )
 
+flatbuffer_cc_library(
+    name = "phrase_tokenizer_model",
+    srcs = [
+        "phrase_tokenizer_model.fbs",
+    ],
+)
+
 tf_cc_library(
     name = "fast_wordpiece_tokenizer_model_builder",
     srcs = ["fast_wordpiece_tokenizer_model_builder.cc"],
@@ -1015,6 +1022,45 @@ cc_test(
         ":whitespace_tokenizer_config_builder",
         "@com_google_googletest//:gtest_main",
         "@icu//:common",
+        # tf:lib tensorflow dep,
+        # tf:test_main tensorflow dep,
+    ],
+)
+
+cc_library(
+    name = "phrase_tokenizer",
+    srcs = ["phrase_tokenizer.cc"],
+    hdrs = ["phrase_tokenizer.h"],
+    deps = [
+        ":phrase_tokenizer_model",
+        ":whitespace_tokenizer",
+        ":whitespace_tokenizer_config_builder",
+        ":wordpiece_tokenizer",
+        "//base:logging",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "//third_party/absl/random",
+        "@com_google_absl//absl/status:statusor",
+        "@com_google_absl//absl/strings",
+        "@icu//:common",
+        # lite/kernels/shim:status_macros tensorflow dep,
+        "//third_party/tensorflow_lite_support/custom_ops/kernel/sentencepiece:utils",
+        "//tensorflow_text/core/kernels/sentencepiece:double_array_trie",
+    ],
+)
+
+cc_test(
+    name = "phrase_tokenizer_test",
+    size = "small",
+    srcs = ["phrase_tokenizer_test.cc"],
+    data = [
+        "//tensorflow_text:python/ops/test_data/phrase_tokenizer_model.fb",
+    ],
+    deps = [
+        ":phrase_tokenizer",
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/status:statusor",
         # tf:lib tensorflow dep,
         # tf:test_main tensorflow dep,
     ],

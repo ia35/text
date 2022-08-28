@@ -1,0 +1,31 @@
+namespace tensorflow.text;
+
+table Trie {
+  nodes: [uint32];
+}
+
+
+table PhraseTokenizerConfig {
+  // Probability of choosing shorter phrase over longer ones.
+  prob: int;
+
+  // The unknown token string.
+  unk_token: string;
+
+  // The unkown token id.
+  unk_token_id: int;
+
+  // Whether the tokenizer supports detokenization function.
+  support_detokenization: bool;
+
+  // Phrases Vocabulary array.
+  vocab_array: [string];
+
+  // mapping of token stored in trie.
+  vocab_trie: Trie;
+
+  // whilte space config.
+  whitespace_config: string;
+}
+
+root_type PhraseTokenizerConfig;
